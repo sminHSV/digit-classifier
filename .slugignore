@@ -1,0 +1,10 @@
+__pycache__
+.vscode
+logs
+venv
+venv_gpu
+.gitignore
+build_model.py
+README.md
+requirements.txt
+runtime.txt
