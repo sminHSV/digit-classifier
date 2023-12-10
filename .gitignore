@@ -1,0 +1,4 @@
+venv
+venv_gpu
+logs
+__pycache__
