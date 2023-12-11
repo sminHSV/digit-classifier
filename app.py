@@ -17,13 +17,15 @@ def main():
 def predict():
     data = request.json['image']
     image = urllib.request.urlopen(data)
-    f = open('image.jpg', 'wb')
+    f = open('image.png', 'wb')
     f.write(image.file.read())
     f.close()
-    image = tf.keras.preprocessing.image.load_img('image.jpg', target_size=(28, 28), color_mode='grayscale', interpolation='bilinear')
+    image = tf.keras.preprocessing.image.load_img('image.png', target_size=(28, 28), color_mode='grayscale', interpolation='bilinear')
     image = PIL.ImageOps.invert(image)
     image = tf.keras.preprocessing.image.img_to_array(image)
     image = np.array([image])
     output = activation_model.predict(image)
-    pred = np.argmax(output[-1][0,:,0])
+    pred = np.argmax(output[-1][0])
+    feature_maps_1 = output[4][0,:,:,:]
+    feature_maps_2 = output[6][0,:,:,:]
     return jsonify({"result": int(pred)})
