@@ -25,5 +25,5 @@ def predict():
     image = tf.keras.preprocessing.image.img_to_array(image)
     image = np.array([image])
     output = activation_model.predict(image)
-    pred = np.argmax(output[0][-1])
+    pred = np.argmax(output[-1][0,:,0])
     return jsonify({"result": int(pred)})
