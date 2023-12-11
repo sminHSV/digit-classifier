@@ -24,5 +24,6 @@ def predict():
     image = PIL.ImageOps.invert(image)
     image = tf.keras.preprocessing.image.img_to_array(image)
     image = np.array([image])
-    pred = np.argmax(model.predict(image)[0])
+    output = activation_model.predict(image)
+    pred = np.argmax(output[0][-1])
     return jsonify({"result": int(pred)})
