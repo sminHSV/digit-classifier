@@ -16,7 +16,7 @@
     ">
         <div style="grid-column: 2">
             <h1>Draw a digit:</h1>
-            <canvas id="canvas" width="600" height="600"></canvas>
+            <canvas id="canvas" width=700 height=700></canvas>
             <br>
             <button id="clear" style="font-size: 20px">clear</button>
             <button id="submit" style="font-size: 20px">submit</button>
@@ -26,6 +26,23 @@
         <div style="grid-column: 3;text-align: center;">
             <h1>You Entered:</h1>
             <span id="result" style="font-size: 50px;"></span>
+            <br>
+            <h2>Input:</h2>
+            <img 
+                id="input" 
+                width=28 height=28 
+                style=
+                "width: 150px; 
+                height: 150px; 
+                image-rendering: pixelated">
+            </img>
+            <h2>Feature Maps:</h2>
+            <div id="layer_1" style="
+                display: grid;
+                grid-template-columns: repeat(2, auto);
+                grid-template-rows: repeat(3, auto);
+                gap: 10px;
+            "></div>
         </div>
     </div>
 </body>
@@ -89,7 +106,6 @@ function draw(x2, y2, x1, y1) {
 }
 
 clear.addEventListener("click", function (e) {
-    document.getElementById("result").innerHTML = "";
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }, false);
@@ -97,7 +113,7 @@ clear.addEventListener("click", function (e) {
 submit.addEventListener("click", function (e) {
     document.getElementById("result").innerHTML = "...";
 
-    var image = canvas.toDataURL("image/jpeg", 1.0);
+    var image = canvas.toDataURL("image/png", 1.0);
     url = {{ url_for('predict')|tojson }};
 
     fetch(url, {
@@ -111,7 +127,24 @@ submit.addEventListener("click", function (e) {
     }).then(function (response) {
         return response.json();
     }).then(function (json) {
+        console.log(json)
         document.getElementById("result").innerHTML = json.result;
+        document.getElementById("input").src = json.input;
+        document.getElementById("layer_1").replaceChildren()
+        json.feature_maps_1.forEach((img) => {
+            div = document.createElement("div");
+            node = document.createElement("img")
+            node.setAttribute("src", img)
+            node.setAttribute("width", 28)
+            node.setAttribute("height", 28)
+            node.setAttribute("style",
+                "width: 100px;" +
+                "height: 100px;" +
+                "image-rendering: pixelated;"
+            );
+            div.appendChild(node);
+            document.getElementById("layer_1").appendChild(div);
+        })
     });
 }, false);
 </script>
