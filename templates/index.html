@@ -92,17 +92,14 @@ canvas.addEventListener("mouseout", function (e) {
 }, false);
 
 function draw(x2, y2, x1, y1) {
-    width = lineWidth.value;
-    length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-
-    for (var t = 0; t <= length; t += 5) {
-        x = x1 + (t / length) * (x2 - x1);
-        y = y1 + (t / length) * (y2 - y1);
-        ctx.fillStyle = "black";
-        ctx.beginPath();
-        ctx.arc(x, y, width/2, 0, Math.PI * 2);
-        ctx.fill();
-    }
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = lineWidth.value
+    ctx.lineCap='round'
+    ctx.beginPath();
+    ctx.moveTo(x1, y1)
+    ctx.lineTo(x2, y2)
+    ctx.stroke()
+    ctx.closePath()
 }
 
 clear.addEventListener("click", function (e) {

@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import urllib
 import tensorflow as tf
 import numpy as np
-import PIL.ImageOps
+from PIL import ImageOps
 from PIL import Image
 import io
 import base64
@@ -18,47 +18,59 @@ def main():
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    # Receive image data
     data = request.json['image']
-    image = urllib.request.urlopen(data)
-    f = open('image.png', 'wb')
-    f.write(image.file.read())
-    f.close()
-    image = tf.keras.preprocessing.image.load_img('image.png', target_size=(28, 28), color_mode='grayscale', interpolation='bilinear')
-    image = PIL.ImageOps.invert(image)
-    image = tf.keras.preprocessing.image.img_to_array(image)
-    image = np.array([image])
-    output = activation_model.predict(image)
+    # Open image
+    im = urllib.request.urlopen(data)
+    im = Image.open(io.BytesIO(im.file.read()))
+    # Convert to grayscale
+    im = im.convert('L') 
+    # Invert image
+    im = ImageOps.invert(im)
+    # Crop image
+    bbox = im.getbbox()
+    if bbox is not None:
+        size = max(bbox[2] - bbox[0], bbox[3] - bbox[1])
+        left = bbox[0] + (bbox[2] - bbox[0] - size) // 2
+        upper = bbox[1] + (bbox[3] - bbox[1] - size) // 2
+        right = left + size
+        bottom = upper + size
+        im = im.crop((left, upper, right, bottom))
+    # Resize image
+    im = im.resize((28, 28), resample=Image.Resampling.BICUBIC)
+    # Convert to numpy array
+    im = np.asarray(im, dtype=np.float32)
+    # Normalize image
+    im /= 255.0
+
+    # Make prediction
+    output = activation_model.predict(np.array([im]))
     pred = np.argmax(output[-1][0])
 
-    input = output[0][0][:, :, 0]
-    feature_maps_1 = output[4][0]
-    feature_maps_2 = output[6][0]
-
-    feature_maps_1 = np.transpose(feature_maps_1, (2, 0, 1))
-    feature_maps_2 = np.transpose(feature_maps_2, (2, 0, 1))
-
-    def encode_image(array):
-        image = tf.keras.preprocessing.image.array_to_img([array], data_format='channels_first')
-        image.save('image.png')
-        buffer = io.BytesIO()
-        image.save(buffer, format='PNG')
-        string = base64.b64encode(buffer.getvalue()).decode('utf-8')
-        string = 'data:image/png;base64,' + string
-        return string
+    # Get feature maps
+    input = output[0][0]
+    fm_1 = output[4][0]
+    fm_2 = output[6][0]
     
-    images_1 = []
-    images_2 = []
-    for i in range(6):
-        images_1.append(encode_image(feature_maps_1[i]))
+    # Channel First
+    input = np.transpose(input, (2, 0, 1))
+    fm_1 = np.transpose(fm_1, (2, 0, 1))
+    fm_2 = np.transpose(fm_2, (2, 0, 1))
 
-    for i in range(16):
-        images_2.append(encode_image(feature_maps_2[i]))
+    # Encode images as base64 Data URLs
+    def encode_image_array(array):
+        im = tf.keras.preprocessing.image.array_to_img(
+            [array], data_format='channels_first')
+        buffer = io.BytesIO()
+        im.save(buffer, format='PNG')
+        string = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        string = 'data:im/png;base64,' + string
+        return string
 
-    input = encode_image(input)
-
+    # Return prediction and feature maps
     return jsonify({
         "result": int(pred),
-        "input": input,
-        "feature_maps_1": images_1,
-        "feature_maps_2": images_2
+        "input": encode_image_array(input[0]),
+        "feature_maps_1": [encode_image_array(im) for im in fm_1],
+        "feature_maps_2": [encode_image_array(im) for im in fm_2]
     })

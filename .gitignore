@@ -3,3 +3,5 @@ venv_gpu
 logs
 __pycache__
 .vscode
+*.png
+*.jpg
