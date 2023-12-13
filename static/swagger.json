@@ -1,0 +1,79 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Title",
+        "description": "API Description",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/predict": {
+            "post": {
+                "summary": "",
+                "description": "",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "image/*": {
+                            "schema": {
+                                "type": "string",
+                                "format": "binary"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The predicted number and feature maps",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "class": {
+                                            "type": "integer",
+                                            "description": "The predicted number"
+                                        },
+                                        "feature_maps_1": {
+                                            "type": "array",
+                                            "description": "The feature maps of the first convolutional layer",
+                                            "items": {
+                                                "type": "string",
+                                                "format": "base64",
+                                                "description": "The feature map image as a base64 data URL"
+                                            }
+                                        },
+                                        "feature_maps_2": {
+                                            "type": "array",
+                                            "description": "The feature maps of the second convolutional layer",
+                                            "items": {
+                                                "type": "string",
+                                                "format": "base64",
+                                                "description": "The feature map image as a base64 data URL"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "RequestBodySchema": {
+                "type": "object",
+                "properties": {
+                    "property1": {
+                        "type": "string"
+                    },
+                    "property2": {
+                        "type": "integer"
+                    }
+                },
+                "required": ["property1"]
+            }
+        }
+    }
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+</head>
+<body>
+<div style="text-align: center;">
+    <h1>You Entered:</h1>
+    <span id="result" style="font-size: 50px;">
+        {{pred}}
+    </span>
+    <br>
+    <h2>Input:</h2>
+    <img 
+        id="input" 
+        width=28 height=28 
+        style=
+        "width: 150px; 
+        height: 150px; 
+        image-rendering: pixelated"
+        src="{{input}}"
+    ></img>
+    <h2>1st Layer:</h2>
+    <div id="layer_1" style="
+        display: grid;
+        grid-template-columns: repeat(6, auto);
+        gap: 10px;
+        text-align: center;
+    ">
+        {%for im in layer_1%}
+            <img 
+                id="input" 
+                width=28 height=28 
+                style=
+                "width: 100px; 
+                height: 100px; 
+                image-rendering: pixelated"
+                src="{{im}}">
+            </img>
+        {%endfor%}
+    </div>
+    <h2>2nd Layer:</h2>
+    <div id="layer_2" style="
+        display: grid;
+        grid-template-columns: repeat(8, auto);
+        grid-template-rows: repeat(2, auto);
+        gap: 10px;
+        text-align: center;
+    ">
+        {%for im in layer_2%}
+            <img 
+                id="input" 
+                width=28 height=28 
+                style=
+                "width: 70px; 
+                height: 70px; 
+                image-rendering: pixelated"
+                src="{{im}}">
+            </img>
+        {%endfor%}
+    </div>
+</div>
+</body>
+</html>

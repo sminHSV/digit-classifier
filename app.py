@@ -6,23 +6,35 @@ from PIL import ImageOps
 from PIL import Image
 import io
 import base64
+from flask_swagger_ui import get_swaggerui_blueprint
 
 app = Flask(__name__)
+
+SWAGGER_URL = '/doc'
+API_URL = '/static/swagger.json'
+
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "Digit Classifier"
+    }
+)
+app.register_blueprint(swaggerui_blueprint)
 
 model = tf.keras.models.load_model('saved_models/model.keras')
 activation_model = tf.keras.models.Model(model.inputs, [layer.output for layer in model.layers])
 
 @app.route("/")
 def main():
-    return render_template('index.html')
+    return render_template('gui.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Receive image data
-    data = request.json['image']
+    # Receive request data
+    data = request.get_data()
     # Open image
-    im = urllib.request.urlopen(data)
-    im = Image.open(io.BytesIO(im.file.read()))
+    im = Image.open(io.BytesIO(data))
     # Convert to grayscale
     im = im.convert('L') 
     # Invert image
@@ -67,10 +79,10 @@ def predict():
         string = 'data:im/png;base64,' + string
         return string
 
-    # Return prediction and feature maps
-    return jsonify({
-        "result": int(pred),
-        "input": encode_image_array(input[0]),
-        "feature_maps_1": [encode_image_array(im) for im in fm_1],
-        "feature_maps_2": [encode_image_array(im) for im in fm_2]
-    })
+    return render_template(
+        'results.html',
+        pred=pred,
+        input=encode_image_array(input[0]),
+        layer_1=[encode_image_array(im) for im in fm_1],
+        layer_2=[encode_image_array(im) for im in fm_2]
+    )
