@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 import urllib
 import tensorflow as tf
 import numpy as np
@@ -11,7 +11,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 app = Flask(__name__)
 
 SWAGGER_URL = '/doc'
-API_URL = url_for('static', filename='swagger.json')
+API_URL = '/spec'
 
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,
@@ -28,6 +28,10 @@ activation_model = tf.keras.models.Model(model.inputs, [layer.output for layer i
 @app.route("/")
 def main():
     return render_template('gui.html')
+
+@app.route('/spec')
+def spec():
+    return send_from_directory(app.root_path, 'swagger.json')
 
 @app.route('/predict', methods=['POST'])
 def predict():
