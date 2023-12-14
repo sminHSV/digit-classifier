@@ -96,6 +96,24 @@ canvas.addEventListener("touchmove", function (e) {
     canvas.dispatchEvent(mouseEvent);
 }, false);
 
+document.body.addEventListener("touchstart", function (e) {
+    if (e.target == canvas) {
+        e.preventDefault();
+    }
+}, false);
+
+document.body.addEventListener("touchend", function (e) {
+    if (e.target == canvas) {
+        e.preventDefault();
+    }
+}, false);
+
+document.body.addEventListener("touchmove", function (e) {
+    if (e.target == canvas) {
+        e.preventDefault();
+    }
+}, false);
+
 function draw(x2, y2, x1, y1) {
     ctx.strokeStyle = "black";
     ctx.lineWidth = lineWidth.value
