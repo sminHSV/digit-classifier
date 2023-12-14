@@ -90,5 +90,3 @@ def predict():
         layer_1=[encode_image_array(im) for im in fm_1],
         layer_2=[encode_image_array(im) for im in fm_2]
     )
-
-print(app.url_map)
