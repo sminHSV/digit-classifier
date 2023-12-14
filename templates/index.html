@@ -74,6 +74,7 @@ canvas.addEventListener("mouseout", function (e) {
 }, false);
 
 canvas.addEventListener("touchstart", function (e) {
+    e.preventDefault();
     e.stopPropagation();
     var touch = e.touches[0];
     var mouseEvent = new MouseEvent("mousedown", {
@@ -81,15 +82,19 @@ canvas.addEventListener("touchstart", function (e) {
         clientY: touch.clientY
     });
     canvas.dispatchEvent(mouseEvent);
+    return false;
 }, false);
 
 canvas.addEventListener("touchend", function (e) {
+    e.preventDefault();
     e.stopPropagation();
     var mouseEvent = new MouseEvent("mouseup", {});
     canvas.dispatchEvent(mouseEvent);
+    return false;
 }, false);
 
 canvas.addEventListener("touchmove", function (e) {
+    e.preventDefault();
     e.stopPropagation();
     var touch = e.touches[0];
     var mouseEvent = new MouseEvent("mousemove", {
@@ -97,6 +102,7 @@ canvas.addEventListener("touchmove", function (e) {
         clientY: touch.clientY
     });
     canvas.dispatchEvent(mouseEvent);
+    return false;
 }, false);
 
 document.body.addEventListener("touchstart", function (e) {
