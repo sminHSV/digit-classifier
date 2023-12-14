@@ -27,7 +27,7 @@ activation_model = tf.keras.models.Model(model.inputs, [layer.output for layer i
 
 @app.route("/")
 def main():
-    return render_template('gui.html')
+    return render_template('index.html')
 
 @app.route('/spec')
 def spec():
@@ -90,3 +90,5 @@ def predict():
         layer_1=[encode_image_array(im) for im in fm_1],
         layer_2=[encode_image_array(im) for im in fm_2]
     )
+
+print(app.url_map)
