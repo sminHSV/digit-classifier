@@ -41,8 +41,7 @@ ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 lineWidth = document.getElementById("lineWidth");
 
-prev_x = 0;
-prev_y = 0;
+var prev = { x: 0, y: 0 };
 
 mousedown = false;
 
@@ -55,21 +54,17 @@ function getMousePos(canvas, evt) {
   }
 
 canvas.addEventListener("mousemove", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
     pos = getMousePos(canvas, e);
     if (mousedown) {
-        draw(pos.x, pos.y, prev_x, prev_y);
+        draw(pos.x, pos.y, prev.x, prev.y);
     }
-    prev_x = pos.x;
-    prev_y = pos.y;
+    prev = pos;
 }, false);
 canvas.addEventListener("mousedown", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
     mousedown = true;
     pos = getMousePos(canvas, e);
     draw(pos.x, pos.y, pos.x, pos.y);
+    prev = pos;
 }, false);
 canvas.addEventListener("mouseup", function (e) {
     mousedown = false;
