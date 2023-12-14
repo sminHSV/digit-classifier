@@ -55,6 +55,8 @@ function getMousePos(canvas, evt) {
   }
 
 canvas.addEventListener("mousemove", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
     pos = getMousePos(canvas, e);
     if (mousedown) {
         draw(pos.x, pos.y, prev_x, prev_y);
@@ -63,6 +65,8 @@ canvas.addEventListener("mousemove", function (e) {
     prev_y = pos.y;
 }, false);
 canvas.addEventListener("mousedown", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
     mousedown = true;
     pos = getMousePos(canvas, e);
     draw(pos.x, pos.y, pos.x, pos.y);
